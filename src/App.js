@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { 
+  lazy, 
+  Suspense, 
+  useState, 
+  useEffect, 
+} from 'react';
+import Loader from 'react-loader-spinner'
 import { processResponse } from './utils';
 import styles from "./App.module.scss";
+
+const WordList = lazy(() => import('./WordList'));
 
 const getDataUrl = (page = 1) => `http://localhost:8080/api.json?page=${page}`;
 const ADD_URL = 'http://localhost:8080/add';
@@ -97,24 +105,19 @@ const App = () => {
 
   return (
     <div className={styles.Main}>
-      <h1>和英語彙</h1>
-      <div className={styles.Container}>
-      <div className={styles.Mouse}>Mouse Position: ({mousePosition.x}, {mousePosition.y})</div>
-      <form onSubmit={onSubmit} className={styles.Form}>
-        <span>JP: <input name="jp" onChange={onChange} value={form.jp} required /><br /></span>
-        <span>EN: <input name="en" onChange={onChange} value={form.en} required /><br /></span>
-        <button type="submit">追加</button>
-      </form>
-      </div>
-      <div className={styles.Container}>
-        { vocab.map((item, i) => (
-          <div key={i} className={styles.Data}>
-            <ul>
-              <li>{item.jp_word}</li>
-              <li>{item.en_word}</li>
-            </ul>
-          </div>
-        ))}
+    <h1>和英語彙</h1>
+    <div className={styles.Container}>
+    <div className={styles.Mouse}>Mouse Position: ({mousePosition.x}, {mousePosition.y})</div>
+    <form onSubmit={onSubmit} className={styles.Form}>
+    <span>JP: <input name="jp" onChange={onChange} value={form.jp} required /><br /></span>
+    <span>EN: <input name="en" onChange={onChange} value={form.en} required /><br /></span>
+    <button type="submit">追加</button>
+    </form>
+    </div>
+    <div className={styles.Container}>
+    <Suspense fallback={<Loader type="ThreeDots" color="#1565c0" height={80} width={80} />}>
+      <WordList vocab={vocab} />
+    </Suspense>
       </div>
       <div className={styles.Nav}>
         { prevButtion }
@@ -123,5 +126,5 @@ const App = () => {
     </div>
   );
 }
-
+    
 export default App;
